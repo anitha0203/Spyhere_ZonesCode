@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import 'ol/ol.css';
+/*import 'ol/ol.css';
 import GeoJSON from 'ol/format/GeoJSON';
 import Map from 'ol/Map';
 import MultiPoint from 'ol/geom/MultiPoint';
@@ -7,7 +7,7 @@ import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import View from 'ol/View';
 import {Circle as CircleStyle, Fill, Stroke, Style} from 'ol/style';
-
+*/
 @Component({
   selector: 'app-list',
   templateUrl: './list.component.html',
@@ -19,7 +19,7 @@ export class ListComponent implements OnInit {
 
   ngOnInit(): void {
   }
-
+/*
  styles = [
   /* We are using two different styles for the polygons:
    *  - The first style is for the polygons themselves.
@@ -27,7 +27,7 @@ export class ListComponent implements OnInit {
    *    In a custom `geometry` function the vertices of a polygon are
    *    returned as `MultiPoint` geometry, which will be used to render
    *    the style.
-   */
+   *
   new Style({
     stroke: new Stroke({
       color: 'blue',
@@ -45,7 +45,7 @@ export class ListComponent implements OnInit {
       }),
     }),
     geometry: function (feature) {
-      // return the coordinates of the first ring of the polygon
+       return the coordinates of the first ring of the polygon
       var coordinates = feature.getGeometry().getCoordinates()[0];
       return new MultiPoint(coordinates);
     },
@@ -139,5 +139,5 @@ export class ListComponent implements OnInit {
     center: [0, 3000000],
     zoom: 2,
   }),
-});
+});*/
 }

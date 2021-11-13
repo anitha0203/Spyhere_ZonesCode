@@ -14,15 +14,19 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ListComponent } from './list/list.component';
+import { TestComponent } from './test/test.component';
+import { GraphQLModule } from './graphql.module';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
     AppComponent,
-    ListComponent
+    ListComponent,
+    TestComponent
   ],
   imports: [
     BrowserModule,FormsModule,ReactiveFormsModule,MatInputModule,MatFormFieldModule,MatButtonModule,
-    AppRoutingModule,MatCardModule,MatToolbarModule,MatIconModule,MatAutocompleteModule, BrowserAnimationsModule
+    AppRoutingModule,MatCardModule,MatToolbarModule,MatIconModule,MatAutocompleteModule, BrowserAnimationsModule, GraphQLModule, HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]
