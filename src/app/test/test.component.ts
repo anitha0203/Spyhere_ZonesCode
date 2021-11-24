@@ -18,28 +18,14 @@ import BingMaps from 'ol/source/BingMaps'
 import { HashLocationStrategy } from '@angular/common';
 import { setClassMetadata } from '@angular/core/src/r3_symbols';
 
-const zonedata =   gql`query{ 
-  
-  zonesActionZones(installationId:"DFBF51F8-B80F-4541-8EF9-945E64A00919")
+const zonedata =   gql`query 
+{ 
+  zones(installationId: "378BF789-AECC-4F17-BB30-2F19B1A45DEA") 
   { 
+    id 
+      name 
       shape 
-      actionZoneType 
-      vehicles 
-      workingId 
-      actions 
-      { 
-          delaySeconds 
-          durationSeconds 
-      } 
-      alerts 
-      { 
-           enabled 
-           parameter 
-           type 
-      } 
-      alertsPriority 
-      association 
-      direction 
+     enabled 
   } 
 }  `
 const courseimage = gql`query
@@ -154,13 +140,13 @@ export class TestComponent implements OnInit {
       query: zonedata,
    }).valueChanges.subscribe(data => {
         this.zones1 = data;
-        this.zones2 = this.zones1.data.zonesActionZones
+        this.zones2 = this.zones1.data.zones
         for(var i=0,p=0;i<this.zones2.length;i++)
         {
            for(;this.zones2[i].shape[0]=='G';i++);
           var h=0;
           var code1:[][]=[[]]
-         for(var k=9;this.zones2[i].shape[k-2]!=')';k++)
+       /*  for(var k=9;this.zones2[i].shape[k-2]!=')';k++)
          {
             if(this.zones2[i].shape[k-1]=='(' || this.zones2[i].shape[k-1]==',')
             {
@@ -190,8 +176,8 @@ export class TestComponent implements OnInit {
          }
          this.code2[p] = code1;
          p++
-       }
-       /* for(var i=0,p=0;i<96;i++)
+       }*/
+        for(var i=0,p=0;i<96;i++)
         {
            for(;this.zones2[i].shape[0]=='G';i++);
           var h=0;
@@ -219,7 +205,7 @@ export class TestComponent implements OnInit {
           }
          this.code2[p] = code1;
          p++
-       }*/
+       }}
        this.addPolygon(this.code2);
       });
       }
