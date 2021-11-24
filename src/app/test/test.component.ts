@@ -18,7 +18,39 @@ import BingMaps from 'ol/source/BingMaps'
 import { HashLocationStrategy } from '@angular/common';
 import { setClassMetadata } from '@angular/core/src/r3_symbols';
 
-const zonedata = gql`
+const zonedata =   gql`query{ 
+  
+  zonesActionZones(installationId:"DFBF51F8-B80F-4541-8EF9-945E64A00919")
+  { 
+      shape 
+      actionZoneType 
+      vehicles 
+      workingId 
+      actions 
+      { 
+          delaySeconds 
+          durationSeconds 
+      } 
+      alerts 
+      { 
+           enabled 
+           parameter 
+           type 
+      } 
+      alertsPriority 
+      association 
+      direction 
+  } 
+}  `
+const courseimage = gql`query
+{
+  installationContents(installationId:"378BF789-AECC-4F17-BB30-2F19B1A45DEA")
+  {
+    installationId
+    installationContentFnvId
+  }
+}`
+/*gql`
        { 
          zones(installationId: "378BF789-AECC-4F17-BB30-2F19B1A45DEA") 
          { 
@@ -27,7 +59,7 @@ const zonedata = gql`
              shape 
              enabled 
          } 
-       } `
+       } `*/
 
 @Component({
   selector: 'app-test',
@@ -35,22 +67,18 @@ const zonedata = gql`
   styleUrls: ['./test.component.css']
 })
 export class TestComponent implements OnInit {
-  rates: any;
-  rates1: any;
+  zones1: any;
+  zones2: any;
   error: any;
   loading: any;  
   start:any;
   end:any;
-  a!:Array<any>
   temp:any
   temp1:any
   temp2:any
-  temp3:any
-  temp4:any
-  code: [][]=[[]]
-  code1: [][]=[[]]
+  courseData:any;
   code2=[[[]]]
-  code3=[[[]]]
+  courseData2: any;
   ngOnInit() {
   
   }
@@ -58,25 +86,24 @@ export class TestComponent implements OnInit {
 
   vectorLayer: any;
   map!: Map;
-  getco=[
-    [
-    [-122.98202672682237,49.31676772909123],
-    [ -122.98159757337999,49.317404167697546],
-    [ -122.98158684454394,49.317655943363214],
-    [ -122.98209109983871,49.31775385575019],
-    [ -122.98234859190416,49.317208341322825],
-    [ -122.98260608396959,49.31686564325354],
-    [ -122.98202672682237,49.31676772909123]
-    ]
-  ];
+  level=0;
+  Color="pink";
+  
   ngAfterViewInit(): void {
-    let polygonStyle = new Style({
+    
+   /* if(this.level==1)
+      this.Color = "red";
+    else if(this.level==2)
+      this.Color = "green"
+    else 
+      this.Color = "yellow"*/
+     let polygonStyle = new Style({
       fill: new Fill({
-        color: "#66a3ff"
+        color: this.Color
       }),
       stroke: new Stroke({
         color: "#e6f0ff",
-        width: 4
+        width: 1
       })
     });
     let vectorSource = new VectorSource({features: []});
@@ -113,64 +140,93 @@ export class TestComponent implements OnInit {
         })
       ])
     });
-   
-  console.log("  "+ JSON.stringify(this.getco))
-    
-  // this.addPolygon(this.code2);
-  
-  
-  
+    /*  This is for Course Image */
+    this.apollo.watchQuery({
+      query: courseimage,
+    }).valueChanges.subscribe(data => {
+      this.courseData = data;
+      this.courseData2 = this.courseData.data.installationContents
+      console.log(" Hash Tag " + this.courseData2[0].installationContentFnvId)
+    })
+
+    /*  This is for Zones */
     this.apollo.watchQuery({
       query: zonedata,
    }).valueChanges.subscribe(data => {
-        this.rates = data;
-        this.rates1 = this.rates.data.zones
-        for(var i=0,p=-1;i<96;i++)
+        this.zones1 = data;
+        this.zones2 = this.zones1.data.zonesActionZones
+        for(var i=0,p=0;i<this.zones2.length;i++)
         {
-           for(;this.rates1[i].shape[0]=='G';i++);
-              
-           console.log("  ")
+           for(;this.zones2[i].shape[0]=='G';i++);
           var h=0;
-          p++;
-         for(var k=10;this.rates1[i].shape[k-2]!=')';k++)
+          var code1:[][]=[[]]
+         for(var k=9;this.zones2[i].shape[k-2]!=')';k++)
          {
-            if(this.rates1[i].shape[k-1]=='(' || this.rates1[i].shape[k-1]==',')
+            if(this.zones2[i].shape[k-1]=='(' || this.zones2[i].shape[k-1]==',')
             {
-               this.start = k+1;
-              for(;this.rates1[i].shape[k]!=',' && this.rates1[i].shape[k]!=')' ;k++)
-                  if(this.rates1[i].shape[k+1]==',' || this.rates1[i].shape[k+1]==')')
+                this.start = k+1;
+                for(;this.zones2[i].shape[k]!=',' && this.zones2[i].shape[k]!=')' ;k++)
+                  if(this.zones2[i].shape[k+1]==',' || this.zones2[i].shape[k+1]==')')
                     this.end = k+1;
-               this.temp = this.rates1[i].shape.slice(this.start,this.end)
-              for(var l=0;this.temp[l]!=' ';l++);
-                
-              this.temp1 = this.temp.slice(l,this.temp.length)
-              this.temp2 = this.temp.slice(0,l)
-              this.temp3 = parseFloat(this.temp2)
-             this.temp4 = parseFloat(this.temp1)
-             this.code[0] = this.temp3;
-             this.code[1] = this.temp4;
-             this.temp2 = this.code
-             this.code1[h] = this.temp2
-            // console.log("h individual zones: "+this.code1[h]+" h: "+h)
-             h++;            
+                this.temp = this.zones2[i].shape.slice(this.start,this.end)
+                for(var l=0;this.temp[l]!=' ';l++);
+                var code: [][]=[[]];
+                this.temp1 = this.temp.slice(l+1,this.temp.length)
+                this.temp2 = this.temp.slice(0,l)
+                code[0] = this.temp2;
+                code[1] = this.temp1;
+                this.temp2 = code
+                code1[h] = this.temp2    
+                console.log("  ")
+                h++;
             }
-                                   
+           // console.log(" color " +this.zones2[i].alertsPriority)
+            if(this.zones2[i].alertsPriority=="HIGH")
+              this.level=1
+            else if(this.zones2[i].alertsPriority=="MEDIUM")
+                this.level=2
+            else
+                this.level=0
          }
-         for(var t=0;t<h;t++)
-         this.code2[0][t]=this.code1[t] 
-         console.log("i individual zones: "+ JSON.stringify(this.code2)+"  i: "+i );
-        // if(i==0)
-        this.addPolygon(this.code2)
+         this.code2[p] = code1;
+         p++
        }
-        // console.log("i individual zones: "+ JSON.stringify(this.code2)+"  i: "+i );
+       /* for(var i=0,p=0;i<96;i++)
+        {
+           for(;this.zones2[i].shape[0]=='G';i++);
+          var h=0;
+          var code1:[][]=[[]]
+         for(var k=9;this.zones2[i].shape[k-2]!=')';k++)
+         {
+            if(this.zones2[i].shape[k-1]=='(' || this.zones2[i].shape[k-1]==',')
+            {
+                this.start = k+1;
+                for(;this.zones2[i].shape[k]!=',' && this.zones2[i].shape[k]!=')' ;k++)
+                  if(this.zones2[i].shape[k+1]==',' || this.zones2[i].shape[k+1]==')')
+                    this.end = k+1;
+                this.temp = this.zones2[i].shape.slice(this.start,this.end)
+                for(var l=0;this.temp[l]!=' ';l++);
+                var code: [][]=[[]];
+                this.temp1 = this.temp.slice(l+1,this.temp.length)
+                this.temp2 = this.temp.slice(0,l)
+                code[0] = this.temp2;
+                code[1] = this.temp1;
+                this.temp2 = code
+                code1[h] = this.temp2    
+                console.log("  ")
+                h++;
+            }
+          }
+         this.code2[p] = code1;
+         p++
+       }*/
+       this.addPolygon(this.code2);
       });
-      //this.addPolygon();
-      }  
+      }
      addPolygon(getco:any) {
-        console.log(getco)
         const geometry = new Polygon(getco).transform( "EPSG:4326", this.map.getView().getProjection());
         this.vectorLayer.getSource().addFeature(new Feature(geometry));
      }
-     
-
 }
+
+      
